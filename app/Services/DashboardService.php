@@ -48,6 +48,7 @@ class DashboardService
 
             case 'month':
                 return DB::table('bookings')
+                    ->where('stauts', BookingStatus::COMPLETED)
                     ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') AS revenue_month, SUM(total_payment) AS revenue")
                     ->whereYear('created_at', now()->year)
                     ->groupBy('revenue_month')

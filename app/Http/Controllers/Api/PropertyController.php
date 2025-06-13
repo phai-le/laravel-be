@@ -17,7 +17,7 @@ class PropertyController extends Controller
     public function __construct(
         protected PropertyService $service
     ) {
-        $this->middleware('role:' . RoleAdmin::SUPERADMIN->value);
+        // $this->middleware('role:' . RoleAdmin::SUPERADMIN->value);
     }
 
     /**

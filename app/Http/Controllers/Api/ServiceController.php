@@ -19,7 +19,7 @@ class ServiceController extends Controller
         protected ServiceService $service,
     ) {
         $this->service = $service;
-        $this->middleware('role:' . RoleAdmin::SUPERADMIN->value)->except('index', 'show');
+        // $this->middleware('role:' . RoleAdmin::SUPERADMIN->value)->except('index', 'show');
     }
 
     /**

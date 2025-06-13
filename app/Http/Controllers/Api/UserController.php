@@ -21,7 +21,7 @@ class UserController extends Controller
     public function __construct(UserService $userService)
     {
         $this->userService = $userService;
-        $this->middleware('role:' . RoleAdmin::SUPERADMIN->value)->except('index', 'show', 'store', 'update');
+        // $this->middleware('role:' . RoleAdmin::SUPERADMIN->value)->except('index', 'show', 'store', 'update');
     }
 
     /**
@@ -79,13 +79,13 @@ class UserController extends Controller
     /**
      * Summary of destroy
      * @param int $id
-     * @return UserResource
+     * @return \Illuminate\Http\Response
      */
-    public function destroy(int $id): UserResource
+    public function destroy(int $id): \Illuminate\Http\Response
     {
         $user = $this->userService->delete($id);
 
-        return new UserResource($user);
+        return response()->noContent();
     }
 
     /**
