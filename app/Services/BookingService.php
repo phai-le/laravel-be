@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\BookingDetailStatus;
 use App\Enums\BookingStatus;
+use App\Enums\RoomStatus;
 use App\Models\Booking;
 use App\Models\BookingDetail;
 use App\Models\InvoiceDetail;
@@ -410,7 +411,8 @@ class BookingService
         $roomTypeId = Arr::get($data, 'roomType');
         $roomId = Arr::get($data, 'roomId');
 
-        $query = $this->room->whereNotIn('id', $occupiedRoomIds);
+        $query = $this->room->whereNotIn('id', $occupiedRoomIds)
+            ->where('status', RoomStatus::ACTIVE);
 
         if ($roomId) {
             $availableRooms = new Collection([$query->findOrFail($roomId)]);
@@ -476,6 +478,12 @@ class BookingService
     {
         foreach ($bookingDetails as $detail) {
             $roomId = $detail['room_id'];
+            $room = Room::findOrFail($roomId);
+
+            if ($room->status == RoomStatus::INACTIVE) {
+                throw new \Exception("Room with ID {$roomId} is inactive.");
+            }
+
             $newCheckIn = $detail['checkin_at'];
             $newCheckOut = $detail['checkout_at'];
             $room = $this->room::find($roomId);
@@ -603,7 +611,16 @@ class BookingService
 
         $booking->status = BookingStatus::CANCELLED;
 
-        return $booking->save();
+        $booking->save();
+
+        $bookingDetails = $this->bookingDetail->where('booking_id', $id)->get();
+
+        foreach ($bookingDetails as $detail) {
+            $detail->status = BookingDetailStatus::CANCELLED;
+            $detail->save();
+        }
+
+        return true;
     }
 
     /**

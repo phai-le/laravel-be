@@ -14,54 +14,57 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RoomClientController;
 use App\Http\Controllers\Api\UserHomeController;
 use App\Http\Controllers\Api\UserBookingController;
+use App\Http\Controllers\Api\AdminController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admins')->group(function () {
     Route::post('/login', [AuthAdminController::class, 'login']);
 
-    Route::middleware('admin')->group(function () {
-        Route::get('/profile', [AuthAdminController::class, 'getProfile']);
-        Route::post('/logout', [AuthAdminController::class, 'logout']);
-        Route::put('/profile', [AuthAdminController::class, 'updateProfile']);
-        Route::post('/change-password', [AuthAdminController::class, 'changePassword']);
+    // Route::middleware('admin')->group(function () {
+    Route::get('/profile', [AuthAdminController::class, 'getProfile']);
+    Route::post('/logout', [AuthAdminController::class, 'logout'])->middleware('auth:sanctum');
+    Route::put('/profile', [AuthAdminController::class, 'updateProfile']);
+    Route::post('/change-password', [AuthAdminController::class, 'changePassword']);
 
-        Route::apiResource('properties', PropertyController::class);
-        Route::apiResource('room-types', RoomTypeController::class);
+    Route::apiResource('properties', PropertyController::class);
+    Route::apiResource('room-types', RoomTypeController::class);
 
-        Route::apiResource('bookings', AdminBookingController::class);
-        Route::post('/bookings/check-room-availability', [AdminBookingController::class, 'checkRoomAvailability']);
-        Route::post('/bookings/{booking}/confirm', [AdminBookingController::class, 'confirm']);
-        Route::post('/bookings/{booking}/check-in', [AdminBookingController::class, 'checkInGuest']);
-        Route::post('/bookings/{booking}/cancelled', [AdminBookingController::class, 'cancelled']);
-        Route::post('/bookings/{booking}/no-show', [AdminBookingController::class, 'noShow']);
-        Route::post('/bookings/{booking}/check-out', [AdminBookingController::class, 'checkOutGuest']);
-        Route::post('/bookings/{booking}/check-out-room', [AdminBookingController::class, 'checkOutRoom']);
+    Route::apiResource('bookings', AdminBookingController::class);
+    Route::post('/bookings/check-room-availability', [AdminBookingController::class, 'checkRoomAvailability']);
+    Route::post('/bookings/{booking}/confirm', [AdminBookingController::class, 'confirm']);
+    Route::post('/bookings/{booking}/check-in', [AdminBookingController::class, 'checkInGuest']);
+    Route::post('/bookings/{booking}/cancelled', [AdminBookingController::class, 'cancelled']);
+    Route::post('/bookings/{booking}/no-show', [AdminBookingController::class, 'noShow']);
+    Route::post('/bookings/{booking}/check-out', [AdminBookingController::class, 'checkOutGuest']);
+    Route::post('/bookings/{booking}/check-out-room', [AdminBookingController::class, 'checkOutRoom']);
 
-        Route::get('bookings/{booking}/invoice-details', [InvoiceDetailController::class, 'index']);
-        Route::post('bookings/{booking}/invoice-details', [InvoiceDetailController::class, 'editSave']);
-        Route::delete('bookings/{booking}/invoice-details/{id}', [InvoiceDetailController::class, 'destroy']);
+    Route::get('bookings/{booking}/invoice-details', [InvoiceDetailController::class, 'index']);
+    Route::post('bookings/{booking}/invoice-details', [InvoiceDetailController::class, 'editSave']);
+    Route::delete('bookings/{booking}/invoice-details/{id}', [InvoiceDetailController::class, 'destroy']);
 
-        Route::apiResource('rooms', RoomController::class)->except(['update']);
-        Route::post('/rooms/{room}/restore', [RoomController::class, 'restore']);
-        Route::post('/rooms/{room}', [RoomController::class, 'update']);
+    Route::apiResource('rooms', RoomController::class)->except(['update']);
+    Route::post('/rooms/{room}/restore', [RoomController::class, 'restore']);
+    Route::post('/rooms/{room}', [RoomController::class, 'update']);
 
-        Route::apiResource('services', ServiceController::class);
-        Route::post('services/{id}/restore', [ServiceController::class, 'restore']);
+    Route::apiResource('services', ServiceController::class);
+    Route::post('services/{id}/restore', [ServiceController::class, 'restore']);
 
-        Route::apiResource('contacts', ContactController::class);
-        Route::post('contacts/send-contact', [ContactController::class, 'sendContact']);
-        Route::post('contacts/{id}/send-mail', [ContactController::class, 'sendMail']);
+    Route::apiResource('contacts', ContactController::class);
+    Route::post('contacts/send-contact', [ContactController::class, 'sendContact']);
+    Route::post('contacts/{id}/send-mail', [ContactController::class, 'sendMail']);
 
-        Route::apiResource('users', UserController::class);
-        Route::post('users/{id}/restore', [UserController::class, 'restore']);
+    Route::apiResource('users', UserController::class);
+    Route::post('users/{id}/restore', [UserController::class, 'restore']);
 
-        Route::get('/revenue', [DashboardController::class, 'revenue']);
-        Route::get('/get-today-checkout-rooms', [DashboardController::class, 'getTodayCheckoutRooms']);
-        Route::get('/count-contacts', [DashboardController::class, 'countContacts']);
-        Route::get('/count-users', [DashboardController::class, 'countUsers']);
-        Route::get('/count-bookings', [DashboardController::class, 'countBookings']);
-    });
+    Route::get('/revenue', [DashboardController::class, 'revenue']);
+    Route::get('/get-today-checkout-rooms', [DashboardController::class, 'getTodayCheckoutRooms']);
+    Route::get('/count-contacts', [DashboardController::class, 'countContacts']);
+    Route::get('/count-users', [DashboardController::class, 'countUsers']);
+    Route::get('/count-bookings', [DashboardController::class, 'countBookings']);
+
+    Route::apiResource('admin-accounts', AdminController::class);
 });
+// });
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthUserController::class, 'logout']);

@@ -15,7 +15,7 @@ class RoomTypeController extends Controller
     public function __construct(
         protected RoomTypeService $service
     ) {
-        $this->middleware('role:' . RoleAdmin::SUPERADMIN->value);
+        // $this->middleware('role:' . RoleAdmin::SUPERADMIN->value);
     }
 
     /**
